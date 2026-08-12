@@ -1,7 +1,7 @@
 services:
   postgres_dev:
     image: postgres:17
-    container_name: auth_postgres_dev
+    container_name: auth_postgres_devv
     environment:
       POSTGRES_DB: auth_db
       POSTGRES_USER: root
