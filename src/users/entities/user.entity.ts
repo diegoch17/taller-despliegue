@@ -20,6 +20,15 @@ export class User {
   @Column({ type: 'varchar', length: 150, unique: true })
   email!: string;
 
+  @Column({ type: 'varchar', length: 150, unique: true, default: "Vergas" })
+  text3!: string;
+
+  @Column({ type: 'varchar', length: 20 })
+  phone!: string;
+
+   @Column({ type: 'varchar', length: 20 })
+  text2!: string;
+
   @Column({ type: 'varchar', length: 255, select: false })
   password!: string;
 

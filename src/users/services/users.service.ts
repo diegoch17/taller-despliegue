@@ -4,6 +4,7 @@ import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import * as bcrypt from 'bcryptjs';
+import { EditarUserDto } from '../dtos/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -32,6 +33,14 @@ export class UsersService {
   async remove(id: string): Promise<void> {
     const result = await this.userRepository.delete(id);
     if (result.affected === 0) throw new NotFoundException(`Usuario con id ${id} no encontrado`);
+  }
+  async update(id: string, editarUserDto: EditarUserDto): Promise<User> {
+    const user = await this.findOne(id);
+    if(editarUserDto.email && editarUserDto.email !== user.email) {
+      const existingUser = await this.userRepository.findOne({ where: { email: editarUserDto.email } });
+    }
+    Object.assign(user, editarUserDto);
+    return this.userRepository.save(user);
   }
 }
 
