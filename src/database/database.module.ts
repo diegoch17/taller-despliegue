@@ -8,37 +8,73 @@ import config from '../config';
   imports: [
     TypeOrmModule.forRootAsync({
       inject: [config.KEY],
-      useFactory: (configType: ConfigType<typeof config>) => {
-        const { url, user, host, name, password, port } = configType.dataBase;
 
-        // Si existe DATABASE_URL (Neon / Render)
+      useFactory: (configType: ConfigType<typeof config>) => {
+        const {
+          url,
+          user,
+          host,
+          name,
+          password,
+          port,
+        } = configType.dataBase;
+
+        /*
+         * ==========================================
+         * RENDER / NEON / BASE DE DATOS EN LA NUBE
+         * ==========================================
+         */
+
         if (url) {
           return {
             type: 'postgres',
             url,
-            synchronize: process.env.NODE_ENV === 'dev',
+
+            synchronize: false,
+
             autoLoadEntities: true,
+
             ssl: {
-              rejectUnauthorized: false, // Obligatorio para la conexión SSL de Neon
+              rejectUnauthorized: false,
             },
           };
         }
 
-        // Si se usan variables independientes (Postgres local / Docker)
+        /*
+         * ==========================================
+         * POSTGRESQL LOCAL
+         * ==========================================
+         */
+
+        if (!host || !user || !name) {
+          throw new Error(
+            'Faltan variables de PostgreSQL. Verifica POSTGRES_HOST, POSTGRES_USER y POSTGRES_DB.',
+          );
+        }
+
         return {
           type: 'postgres',
+
           host,
-          port,
+
+          port: port || 5432,
+
           username: user,
-          password,
+
+          password: password || '',
+
           database: name,
-          synchronize: process.env.NODE_ENV === 'dev',
+
+          synchronize: false,
+
           autoLoadEntities: true,
         };
       },
     }),
   ],
+
   providers: [],
+
   exports: [TypeOrmModule],
 })
 export class DatabaseModule {}
