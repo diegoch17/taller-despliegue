@@ -4,7 +4,7 @@ import { User } from './users/entities/user.entity';
 
 const databaseUrl = process.env.DATABASE_URL;
 
-export const AppDataSource = new DataSource({
+const AppDataSource = new DataSource({
   type: 'postgres',
 
   ...(databaseUrl
@@ -23,10 +23,9 @@ export const AppDataSource = new DataSource({
       }),
 
   synchronize: false,
-
   logging: true,
-
   entities: [User],
-
   migrations: ['src/database/migrations/**/*.ts'],
 });
+
+export default AppDataSource;
