@@ -45,13 +45,9 @@ const AppDataSource = new DataSource({
    * Las tablas se manejan mediante migraciones.
    */
   synchronize: false,
-
   logging: true,
-
   entities: [User],
-
-  migrations: ['src/database/migrations/*.ts'],
+  migrations: ['src/database/migrations/**/*.ts'],
 });
 
 export default AppDataSource;
-export { AppDataSource };

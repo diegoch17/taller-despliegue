@@ -12,8 +12,8 @@ export class User {
   id!: string;
 
   @Column({ type: 'varchar', length: 100 })
-  name!: string;
-    
+  names!: string;
+
   @Column({ type: 'varchar', length: 100 })
   documento!: string;
 
@@ -21,7 +21,7 @@ export class User {
   email!: string;
 
   @Column({ type: 'varchar', length: 150, unique: true, default: "Vergas" })
-  text3!: string;
+  textl!: string;
 
   @Column({ type: 'varchar', length: 20 })
   phone!: string;
