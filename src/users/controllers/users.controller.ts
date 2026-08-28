@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Patch } from '@nestjs/common';
 //De @nestjs/common: los decoradores para definir rutas 
 //(Get, Post, Delete), para tomar datos de la URL (Param) y del cuerpo de la petición (Body)
 
@@ -7,6 +7,7 @@ import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UsersService } from '../services/users.service';
 //El UsersService (la lógica real) y el CreateUserDto (la forma que debe tener el JSON al crear un usuario)
 import { CreateUserDto } from '../dtos/create-user.dto';
+import { EditarUserDto } from '../dtos/update-user.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -32,6 +33,12 @@ export class UsersController {
   @ApiOperation({ summary: 'Crear un nuevo usuario' })
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Actualizar un usuario por id' })
+  update(@Param('id') id: string, @Body() editarUserDto: EditarUserDto) {
+    return this.usersService.update(id, editarUserDto);
   }
 
  //Recibe la petición DELETE /users/:id, toma el id de la URL y se lo pasa al Service.

@@ -1,43 +1,96 @@
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { Module } from '@nestjs/common';
-
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
-import { enviroments } from './enviroments';
+
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
+
 import config from './config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: enviroments[(process.env.NODE_ENV as keyof typeof enviroments) ?? 'dev'] || '.env',
-      load: [config],
       isGlobal: true,
+
+      load: [config],
+
+      envFilePath: ['.env'],
+
       validationSchema: Joi.object({
+        /*
+         * ==========================================
+         * SERVIDOR
+         * ==========================================
+         */
+
         PORT: Joi.number().default(3000),
-        NODE_ENV: Joi.string().valid('dev', 'stg', 'prod').default('dev'),
-        
-        // Permite la URL completa de Neon / Render
+
+        NODE_ENV: Joi.string()
+          .valid('dev', 'stg', 'prod', 'development', 'production')
+          .default('dev'),
+
+        /*
+         * ==========================================
+         * BASE DE DATOS
+         * ==========================================
+         */
+
         DATABASE_URL: Joi.string().optional(),
-        
-        // Pasan de ser .required() a opcionales para que no rompa en Render
-        POSTGRES_DB: Joi.string().optional(),
-        POSTGRES_USER: Joi.string().optional(),
-        POSTGRES_PASSWORD: Joi.string().optional(),
-        POSTGRES_PORT: Joi.number().default(5432),
+
         POSTGRES_HOST: Joi.string().optional(),
-        
+
+        POSTGRES_PORT: Joi.number().default(5432),
+
+        POSTGRES_USER: Joi.string().optional(),
+
+        POSTGRES_PASSWORD: Joi.string().allow('').optional(),
+
+        POSTGRES_DB: Joi.string().optional(),
+
+        /*
+         * ==========================================
+         * JWT
+         * ==========================================
+         */
+
         JWT_SECRET: Joi.string().optional(),
-        JWT_EXPIRES_IN: Joi.number().optional(),
+
+        JWT_EXPIRES_IN: Joi.number().default(3600),
+
+        /*
+         * ==========================================
+         * CORS
+         * ==========================================
+         */
+
         CORS_ORIGINS: Joi.string().optional(),
-      }).or('DATABASE_URL', 'POSTGRES_HOST'), // Exige que al menos exista DATABASE_URL o POSTGRES_HOST
+      }),
+
+      /*
+       * Tiene que existir una de estas dos opciones:
+       *
+       * DATABASE_URL
+       *
+       * o
+       *
+       * POSTGRES_HOST
+       */
+      validationOptions: {
+        allowUnknown: true,
+        abortEarly: false,
+      },
     }),
+
     DatabaseModule,
+
     UsersModule,
   ],
+
   controllers: [AppController],
+
   providers: [AppService],
 })
 export class AppModule {}
