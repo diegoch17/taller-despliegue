@@ -12,7 +12,7 @@ export class User {
   id!: string;
 
   @Column({ type: 'varchar', length: 100 })
-  name!: string;
+  names!: string;
 
   @Column({ type: 'varchar', length: 100 })
   documento!: string;
